@@ -507,10 +507,14 @@
     elements.voiceStatus.textContent = message;
   }
 
+  function focusKeyboardVoice(message) {
+    setVoiceState(false, message);
+    elements.ideaInput.focus();
+  }
+
   function initVoiceInput() {
     if (!SpeechRecognition) {
-      elements.voiceInput.disabled = true;
-      elements.voiceStatus.textContent = "这里不能直接听写，可以用系统键盘麦克风。";
+      elements.voiceStatus.textContent = "点主图，我帮你叫出键盘麦克风。";
       return;
     }
 
@@ -543,20 +547,27 @@
     recognition.addEventListener("error", (event) => {
       voiceStartedByUser = false;
       const message = event.error === "not-allowed"
-        ? "允许麦克风后，我就能听你说。"
-        : "这次没听清，再说一遍。";
+        ? "麦克风权限没开，也可以用键盘麦克风说。"
+        : "这次没听清，也可以用键盘麦克风说。";
       setVoiceState(false, message);
     });
   }
 
   function toggleVoiceInput() {
-    if (!recognition) return;
+    if (!recognition) {
+      focusKeyboardVoice("键盘出来后，点麦克风说给我听。");
+      return;
+    }
     if (isListening) {
       recognition.stop();
       return;
     }
     elements.voiceStatus.textContent = "先问一下麦克风权限。";
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (error) {
+      focusKeyboardVoice("这里没法直接听写，先用键盘麦克风。");
+    }
   }
 
   function registerServiceWorker() {
