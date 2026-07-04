@@ -535,21 +535,58 @@ dialog::backdrop {
   background: var(--surface);
 }
 
+#dataDialog {
+  border: 2px solid var(--ink);
+  border-radius: 28px;
+  box-shadow: 0 24px 70px rgba(20, 20, 20, 0.16);
+}
+
+#dataDialog .dialog-card {
+  position: relative;
+  overflow: hidden;
+  padding: 22px;
+}
+
+#dataDialog .dialog-card::after {
+  content: "";
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  width: 18px;
+  height: 18px;
+  background: var(--yellow);
+  clip-path: polygon(50% 0, 61% 36%, 100% 50%, 61% 64%, 50% 100%, 39% 64%, 0 50%, 39% 36%);
+}
+
 .data-count {
-  margin: 0;
+  margin: 6px 0 0;
   color: var(--ink);
-  font-size: 28px;
+  font-size: 30px;
   line-height: 1.2;
+  font-weight: 600;
 }
 
 .data-actions {
   align-items: stretch;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 22px;
 }
 
 .data-actions button {
   flex: 1;
+  min-height: 44px;
+  font-weight: 500;
+}
+
+#dataDialog .data-actions .ghost-button:first-child {
+  border-color: var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+#dataDialog .danger-button {
+  border-color: var(--line-strong);
+  color: var(--ink);
 }
 
 .dialog-card textarea {

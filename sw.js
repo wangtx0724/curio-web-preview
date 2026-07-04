@@ -1,4 +1,4 @@
-const CACHE_NAME = "curio-preview-v7";
+const CACHE_NAME = "curio-preview-v8";
 const APP_ASSETS = [
   "./",
   "./index.html",

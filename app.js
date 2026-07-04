@@ -395,12 +395,20 @@
   }
 
   function moveIdeaCursorToEnd() {
-    const end = elements.ideaInput.value.length;
-    elements.ideaInput.focus();
-    const schedule = root.requestAnimationFrame || root.setTimeout;
-    schedule(() => {
+    const placeCursor = () => {
+      const end = elements.ideaInput.value.length;
+      try {
+        elements.ideaInput.focus({ preventScroll: true });
+      } catch (error) {
+        elements.ideaInput.focus();
+      }
       elements.ideaInput.setSelectionRange(end, end);
-    });
+    };
+
+    placeCursor();
+    if (root.requestAnimationFrame) root.requestAnimationFrame(placeCursor);
+    root.setTimeout(placeCursor, 80);
+    root.setTimeout(placeCursor, 220);
   }
 
   function stopVoiceInput() {
@@ -557,14 +565,15 @@
         transcript += event.results[index][0].transcript;
       }
       elements.ideaInput.value = mergeTranscript(voiceBaseText, transcript).slice(0, 420);
-      moveIdeaCursorToEnd();
       updateCharCount();
+      moveIdeaCursorToEnd();
     });
 
     recognition.addEventListener("end", () => {
       if (!voiceStartedByUser) return;
       voiceStartedByUser = false;
       setVoiceState(false, elements.ideaInput.value.trim() ? "我先放到下面了，你可以改改。" : "刚刚溜走了？再说一次。");
+      if (elements.ideaInput.value.trim()) moveIdeaCursorToEnd();
     });
 
     recognition.addEventListener("error", (event) => {
