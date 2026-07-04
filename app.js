@@ -394,10 +394,16 @@
     renderDataStatus();
   }
 
+  function moveIdeaCursorToEnd() {
+    const end = elements.ideaInput.value.length;
+    elements.ideaInput.setSelectionRange(end, end);
+  }
+
   function saveCapture() {
     const result = addIdea(state.ideas, elements.ideaInput.value);
     if (!result.idea) {
       elements.ideaInput.focus();
+      moveIdeaCursorToEnd();
       return;
     }
 
@@ -405,17 +411,18 @@
     state.newestId = result.idea.id;
     state.rediscoveredId = result.idea.id;
     elements.ideaInput.value = "";
+    moveIdeaCursorToEnd();
     updateCharCount();
     persist();
     render();
     clearTimeout(saveFeedbackTimer);
     elements.saveIdea.disabled = true;
     elements.saveIdea.textContent = "收好啦";
+    elements.voiceStatus.textContent = "收好啦，继续说下一条也行。";
     saveFeedbackTimer = root.setTimeout(() => {
-      setView("galleryView");
       elements.saveIdea.disabled = false;
       elements.saveIdea.textContent = "收起来";
-    }, 460);
+    }, 900);
   }
 
   function drawRandomIdea() {
@@ -510,6 +517,7 @@
   function focusKeyboardVoice(message) {
     setVoiceState(false, message);
     elements.ideaInput.focus();
+    moveIdeaCursorToEnd();
   }
 
   function initVoiceInput() {
@@ -535,6 +543,7 @@
         transcript += event.results[index][0].transcript;
       }
       elements.ideaInput.value = mergeTranscript(voiceBaseText, transcript).slice(0, 420);
+      moveIdeaCursorToEnd();
       updateCharCount();
     });
 
