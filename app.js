@@ -396,7 +396,19 @@
 
   function moveIdeaCursorToEnd() {
     const end = elements.ideaInput.value.length;
-    elements.ideaInput.setSelectionRange(end, end);
+    elements.ideaInput.focus();
+    const schedule = root.requestAnimationFrame || root.setTimeout;
+    schedule(() => {
+      elements.ideaInput.setSelectionRange(end, end);
+    });
+  }
+
+  function stopVoiceInput() {
+    voiceStartedByUser = false;
+    if (recognition && isListening) {
+      recognition.stop();
+    }
+    setVoiceState(false, elements.voiceStatus.textContent);
   }
 
   function saveCapture() {
@@ -410,6 +422,7 @@
     state.ideas = result.ideas;
     state.newestId = result.idea.id;
     state.rediscoveredId = result.idea.id;
+    stopVoiceInput();
     elements.ideaInput.value = "";
     moveIdeaCursorToEnd();
     updateCharCount();
@@ -538,6 +551,7 @@
     });
 
     recognition.addEventListener("result", (event) => {
+      if (!voiceStartedByUser) return;
       let transcript = "";
       for (let index = 0; index < event.results.length; index += 1) {
         transcript += event.results[index][0].transcript;
